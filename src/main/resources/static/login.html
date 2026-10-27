@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ExamSeat AI - College Examination Management Portal Login</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .login-box {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      width: 100%;
+      max-width: 440px;
+      padding: 2.25rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .login-brand {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .login-logo {
+      width: 52px;
+      height: 52px;
+      background: linear-gradient(135deg, #0d9488, #2563eb);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    .quick-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 1.25rem 0 0.5rem;
+    }
+    .chip {
+      background: var(--gray-100);
+      border: 1px solid var(--gray-300);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--gray-700);
+      transition: var(--transition);
+    }
+    .chip:hover {
+      background: var(--primary-50);
+      color: var(--primary-700);
+      border-color: var(--primary-500);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-box">
+    <div class="login-brand">
+      <div class="login-logo">🎓</div>
+      <h1 style="font-size: 1.5rem; font-weight: 800; color: var(--primary-900); letter-spacing: -0.02em;">
+        ExamSeat <span style="color: var(--accent-600);">AI</span>
+      </h1>
+      <p style="color: var(--gray-500); font-size: 0.825rem; margin-top: 4px;">
+        Automatic Examination Seating & Hall Ticket System
+      </p>
+      <div class="db-pill" style="margin-top: 10px;">
+        <span class="db-dot"></span> Powered by Supabase PostgreSQL
+      </div>
+    </div>
+
+    <form id="login-form">
+      <div class="form-group">
+        <label class="form-label" for="username">Username / Roll Number</label>
+        <input type="text" id="username" class="form-control" placeholder="e.g. admin or staff_exam" required autofocus>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input type="password" id="password" class="form-control" placeholder="••••••••" required>
+      </div>
+
+      <div id="login-error" style="color: var(--danger-600); font-size: 0.8rem; margin-bottom: 1rem; display: none;"></div>
+
+      <button type="submit" id="btn-submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem; font-size: 0.95rem;">
+        Sign In to Portal
+      </button>
+    </form>
+
+    <div style="margin-top: 1.5rem; border-top: 1px solid var(--gray-200); padding-top: 1rem;">
+      <div style="font-size: 0.75rem; font-weight: 700; color: var(--gray-500); text-transform: uppercase;">
+        ⚡ Demo Quick-Fill Accounts:
+      </div>
+      <div class="quick-chips">
+        <button type="button" class="chip" onclick="fillLogin('admin', 'Admin@123')">👑 Admin</button>
+        <button type="button" class="chip" onclick="fillLogin('staff_exam', 'Admin@123')">📋 Exam Cell</button>
+        <button type="button" class="chip" onclick="fillLogin('invigilator1', 'Admin@123')">👨‍🏫 Invigilator</button>
+        <button type="button" class="chip" onclick="fillLogin('CS001', 'Admin@123')">🧑‍🎓 Student</button>
+      </div>
+    </div>
+
+    <div style="margin-top: 1.25rem; text-align: center;">
+      <a href="/index.html#lookup" style="color: var(--accent-700); font-size: 0.825rem; font-weight: 600; text-decoration: none;">
+        🔎 Public Student Seat Lookup (No Login Needed) &rarr;
+      </a>
+    </div>
+  </div>
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="/js/auth.js"></script>
+  <script src="/js/app.js"></script>
+  <script>
+    function fillLogin(u, p) {
+      document.getElementById('username').value = u;
+      document.getElementById('password').value = p;
+      document.getElementById('login-error').style.display = 'none';
+    }
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const u = document.getElementById('username').value.trim();
+      const p = document.getElementById('password').value;
+      const btn = document.getElementById('btn-submit');
+      const errEl = document.getElementById('login-error');
+
+      btn.disabled = true;
+      btn.textContent = 'Authenticating...';
+      errEl.style.display = 'none';
+
+      try {
+        await Auth.login(u, p);
+        window.location.href = '/index.html';
+      } catch (err) {
+        errEl.textContent = err.message;
+        errEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Sign In to Portal';
+      }
+    });
+
+    // If already logged in, redirect to dashboard
+    if (Auth.isAuthenticated()) {
+      window.location.href = '/index.html';
+    }
+  </script>
+</body>
+</html>
