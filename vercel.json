@@ -1,30 +1,9 @@
 {
-  "version": 2,
-  "cleanUrls": true,
+  "cleanUrls": false,
   "rewrites": [
     {
       "source": "/",
-      "destination": "/src/main/resources/static/login.html"
-    },
-    {
-      "source": "/(css|js|assets)/(.*)",
-      "destination": "/src/main/resources/static/$1/$2"
-    },
-    {
-      "source": "/login.html",
-      "destination": "/src/main/resources/static/login.html"
-    },
-    {
-      "source": "/index.html",
-      "destination": "/src/main/resources/static/index.html"
-    },
-    {
-      "source": "/lookup.html",
-      "destination": "/src/main/resources/static/lookup.html"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/src/main/resources/static/$1"
+      "destination": "/login.html"
     }
   ]
 }
