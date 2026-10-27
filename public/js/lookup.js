@@ -10,7 +10,11 @@ const LookupView = {
 
   async populateExams() {
     try {
-      const res = await fetch('/api/exams');
+      const url = (typeof Auth !== 'undefined' && Auth.getApiUrl) ? Auth.getApiUrl('/api/exams') : '/api/exams';
+      const res = await fetch(url);
+      if (!res.ok || !res.headers.get('content-type')?.includes('application/json')) {
+        return;
+      }
       const json = await res.json();
       if (json.success) {
         this.allExams = json.data;
@@ -40,10 +44,20 @@ const LookupView = {
     try {
       resultContainer.innerHTML = '<div style="text-align:center; padding:2rem;">Searching allocation records...</div>';
 
-      let url = `/api/lookup/seat?rollNo=${encodeURIComponent(rollNo)}`;
-      if (examId) url += `&examId=${examId}`;
+      let apiPath = `/api/lookup/seat?rollNo=${encodeURIComponent(rollNo)}`;
+      if (examId) apiPath += `&examId=${examId}`;
 
-      const res = await fetch(url);
+      const targetUrl = (typeof Auth !== 'undefined' && Auth.getApiUrl) ? Auth.getApiUrl(apiPath) : apiPath;
+      const res = await fetch(targetUrl);
+
+      if (!res.ok || !res.headers.get('content-type')?.includes('application/json')) {
+        const text = await res.text();
+        if (res.status === 404 || text.includes('The page could not be found')) {
+          throw new Error('Backend API not reachable. The Java Spring Boot server is not running on this host.');
+        }
+        throw new Error(text || 'Lookup failed');
+      }
+
       const json = await res.json();
 
       if (!res.ok || !json.success) {

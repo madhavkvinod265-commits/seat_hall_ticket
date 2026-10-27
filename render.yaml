@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: examseat-ai-backend
+    runtime: docker
+    plan: free
+    region: singapore
+    envVars:
+      - key: PORT
+        value: 8080
+      - key: SUPABASE_DB_HOST
+        value: aws-0-ap-northeast-1.pooler.supabase.com
+      - key: SUPABASE_DB_PORT
+        value: 5432
+      - key: SUPABASE_DB_NAME
+        value: postgres
+      - key: SUPABASE_DB_USER
+        value: postgres.vlcurbuflipriltgkyhe
+      - key: SUPABASE_DB_SSLMODE
+        value: require
+      - key: APP_JWT_SECRET
+        generateValue: true
+      - key: COLLEGE_NAME
+        value: ExamSeat Institute of Technology & Management
+      - key: COLLEGE_CODE
+        value: ESITM-2026
