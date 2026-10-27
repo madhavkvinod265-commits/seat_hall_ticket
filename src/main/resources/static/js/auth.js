@@ -86,9 +86,19 @@ const Auth = {
 
   async fetchWithAuth(url, options = {}) {
     const token = this.getToken();
-    const headers = options.headers || {};
+    const headers = Object.assign({}, options.headers || {});
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const method = (options.method || 'GET').toUpperCase();
+    const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
+
+    // Automatically ensure Content-Type is application/json for JSON payloads or mutating calls
+    if (!isFormData && !headers['Content-Type']) {
+      if (options.body || ['POST', 'PUT', 'PATCH'].includes(method)) {
+        headers['Content-Type'] = 'application/json';
+      }
     }
 
     options.headers = headers;

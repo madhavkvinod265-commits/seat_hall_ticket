@@ -27,8 +27,8 @@ public interface StudentRepository extends JpaRepository<Student, UUID> {
 
     @Query("SELECT s FROM Student s WHERE (:dept IS NULL OR s.department = :dept) " +
            "AND (:sem IS NULL OR s.semester = :sem) " +
-           "AND (:search IS NULL OR LOWER(s.rollNo) LIKE LOWER(CONCAT('%', :search, '%')) " +
-           "OR LOWER(s.name) LIKE LOWER(CONCAT('%', :search, '%')))")
+           "AND (CAST(:search AS string) IS NULL OR LOWER(s.rollNo) LIKE LOWER(CONCAT('%', CAST(:search AS string), '%')) " +
+           "OR LOWER(s.name) LIKE LOWER(CONCAT('%', CAST(:search AS string), '%')))")
     Page<Student> searchStudents(@Param("search") String search,
                                 @Param("dept") String department,
                                 @Param("sem") Integer semester,

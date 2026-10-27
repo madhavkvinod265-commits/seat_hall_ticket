@@ -24,10 +24,10 @@ public interface AllocationRepository extends JpaRepository<Allocation, UUID> {
 
     Optional<Allocation> findByExamIdAndSeatId(UUID examId, UUID seatId);
 
-    @Query("SELECT a FROM Allocation a JOIN a.student s WHERE LOWER(s.rollNo) = LOWER(:rollNo) AND a.exam.id = :examId")
+    @Query("SELECT a FROM Allocation a JOIN a.student s WHERE LOWER(s.rollNo) = LOWER(CAST(:rollNo AS string)) AND a.exam.id = :examId")
     Optional<Allocation> findByStudentRollNoAndExamId(@Param("rollNo") String rollNo, @Param("examId") UUID examId);
 
-    @Query("SELECT a FROM Allocation a JOIN a.student s JOIN a.exam e WHERE LOWER(s.rollNo) = LOWER(:rollNo) " +
+    @Query("SELECT a FROM Allocation a JOIN a.student s JOIN a.exam e WHERE LOWER(s.rollNo) = LOWER(CAST(:rollNo AS string)) " +
            "ORDER BY e.examDate ASC, e.startTime ASC")
     List<Allocation> findByStudentRollNo(@Param("rollNo") String rollNo);
 
